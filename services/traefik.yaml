@@ -1,0 +1,32 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  chart: https://%{KUBERNETES_API}%/static/charts/traefik-1.77.1.tgz
+  set:
+    kubernetes.ingressEndpoint.useDefaultPublishedService: "true"
+    rbac.enabled: "true"
+    ssl.enabled: "true"
+    metrics.prometheus.enabled: "true"
+    dashboard.enabled: "true"
+    dashboard.domain: traefik.gondolin.k3s
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: traefik-dashboard-ingress
+  namespace: kube-system
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: traefik.gondolin.k3s
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: dashboard-service
+          servicePort: http

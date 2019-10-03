@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+
+# requiress the `netifaces` package to be installed
+from netifaces import AF_INET, ifaddresses, interfaces
+
+PRIMARY_IFACE = 'wlp2s0'
+HOST = 'gondolin.k3s'
+TRAEFIK_SUBDOMAIN = 'traefik'
+
+def ip4_addr(iface):
+    return ifaddresses(iface)[AF_INET][0]['addr']
+
+def update_hosts_file(ip, hosts):
+    with open('/etc/hosts', 'r+') as hosts_file:
+        lines = hosts_file.readlines()
+        hosts_file.seek(0)  # Reset to head of file
+        for line in filter(lambda l: l is not '\n', lines):
+            # Keep the line if it doesn't contain our host
+            if all(map(lambda host: host not in line, hosts)):
+                hosts_file.write(line)
+        hosts_file.truncate()   # Remove everything else
+        for host in hosts:
+            hosts_file.write(f'\n{ip} {host}')  # Write our dev entry
+
+if __name__ == '__main__':
+    IP = ip4_addr(PRIMARY_IFACE)
+    update_hosts_file(IP, [HOST, f'{TRAEFIK_SUBDOMAIN}.{HOST}'])
