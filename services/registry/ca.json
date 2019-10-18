@@ -1,0 +1,15 @@
+{
+  "CN": "k3s",
+  "hosts": ["k3s"],
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "USA",
+      "ST": "OR",
+      "L": "Portland"
+    }
+  ]
+}

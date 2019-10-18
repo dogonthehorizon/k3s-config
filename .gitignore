@@ -53,3 +53,7 @@ tags
 [._]*.un~
 
 # End of https://www.gitignore.io/api/linux,git,vim,kubernetes
+
+*.ca
+*.pem
+*.csr

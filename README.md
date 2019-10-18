@@ -55,6 +55,42 @@ kubectl apply -f services/traefik.yaml
 If all goes well, you should be able to navigate to `traefik.gondolin.k3s`,
 or whatever you changed the base hostname to, and see the `traefik` dashboard.
 
+## Local Storage
+
+There is a "host path provisioner" that uses the host machine's filesystem
+to store data from PVC claims in the cluster. You can enable it by running:
+
+```sh
+kc apply -f services/storage-class.yaml
+```
+
+Note you'll have to update the YAML file to put in a host path that is writeable
+on your system.
+
+## Docker Registry
+
+If you'd like to build and publish containers to a registry running in the
+cluster set one up like so:
+
+```sh
+cfssl gencert -cinitca ca.json | cfssljson -bare ca
+ccfssl gencert -ca=ca.pem -ca-key=ca-key.pem -profile=server -hostname=gondolin serverRequest.json | cfssljson -bare registry
+```
+
+Then create the certs in the cluster like so:
+
+```sh
+kc -n kube-system create secret tls registry-ingress-tls --cert=registry.pem --key=registry-key.pem
+```
+
+Then create the registry:
+
+```sh
+kc apply -f services/registry/registry.yaml
+```
+
+Note that this doesn't work currently.
+
 ## Running Locally Built Containers in k3s
 
 Apparently you have to preload them into `k3s` 😐

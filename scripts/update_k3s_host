@@ -6,6 +6,7 @@ from netifaces import AF_INET, ifaddresses, interfaces
 PRIMARY_IFACE = 'wlp2s0'
 HOST = 'gondolin.k3s'
 TRAEFIK_SUBDOMAIN = 'traefik'
+REG_SUBDOMAIN = 'registry'
 
 def ip4_addr(iface):
     return ifaddresses(iface)[AF_INET][0]['addr']
@@ -24,4 +25,7 @@ def update_hosts_file(ip, hosts):
 
 if __name__ == '__main__':
     IP = ip4_addr(PRIMARY_IFACE)
-    update_hosts_file(IP, [HOST, f'{TRAEFIK_SUBDOMAIN}.{HOST}'])
+    update_hosts_file(IP, [HOST,
+                           f'{TRAEFIK_SUBDOMAIN}.{HOST}',
+                           f'{REG_SUBDOMAIN}.{HOST}'
+                          ])

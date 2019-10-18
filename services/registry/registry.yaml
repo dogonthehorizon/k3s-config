@@ -1,0 +1,33 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: docker-registry
+  namespace: kube-system
+spec:
+  chart: stable/docker-registry
+  targetNamespace: kube-system
+  valuesContent: |-
+    service:
+      name: registry
+      type: ClusterIP
+    persistence:
+      enabled: true
+    tlsSecretName: registry-ingress-tls
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: docker-registry
+  namespace: kube-system
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: registry.gondolin.k3s
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: docker-registry
+          servicePort: registry
