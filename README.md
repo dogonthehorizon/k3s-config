@@ -69,37 +69,16 @@ on your system.
 
 ## Docker Registry
 
-If you'd like to build and publish containers to a registry running in the
-cluster set one up like so:
+`k3s` by default runs on containerd instead of docker so getting images 
+running in the cluster isn't quite so straightforward. Here's a quick and
+dirty hack:
 
 ```sh
-cfssl gencert -cinitca ca.json | cfssljson -bare ca
-ccfssl gencert -ca=ca.pem -ca-key=ca-key.pem -profile=server -hostname=gondolin serverRequest.json | cfssljson -bare registry
+docker build -t my.domain.com/container:latest .
+docker save my.domain.com/container:latest -o container.tar
+sudo k3s ctr images import container.tar
+kc run -i --tty my-container --image=my.domain.com/container:latest --image-pull-policy=Never -- sh
 ```
-
-Then create the certs in the cluster like so:
-
-```sh
-kc -n kube-system create secret tls registry-ingress-tls --cert=registry.pem --key=registry-key.pem
-```
-
-Then create the registry:
-
-```sh
-kc apply -f services/registry/registry.yaml
-```
-
-Note that this doesn't work currently.
-
-## Running Locally Built Containers in k3s
-
-Apparently you have to preload them into `k3s` 😐
-
-https://rancher.com/docs/k3s/latest/en/running/#air-gap-support
-
-So presumably the idea is that you `docker save` the thing you're working on,
-pre-load it using this air-gap support shenanigans, then restart `k3s`. I
-haven't gotten around to testing this yet.
 
 [`k3s`]: https://k3s.io
 [`pikaur`]: https://github.com/actionless/pikaur

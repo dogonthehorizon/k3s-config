@@ -1,8 +1,0 @@
-{
-  "CN": "registry",
-  "hosts": ["gondolin"],
-  "key": {
-    "algo": "rsa",
-    "size": 2048
-  }
-}
