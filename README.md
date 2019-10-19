@@ -34,16 +34,15 @@ generated config is written in `/etc/rancher/k3s/k3s.yaml`.
 Otherwise, you can use `sudo k3s kubectl` as a `kubectl` replacement.
 
 Next, create local hosts file entries for the cluster by running the helper
-script in `scripts`. You'll want to make a few modifications before running
-it:
+script in `scripts`.
 
-- Change the interface to whatever your primary card is that gets an IP from
-your router
-- Change the hostname to whatever you want
+- Know the interface you want to bind to (e.g. the name of your wifi card from
+a command like `ip a`)
+- Create a `k3s_hosts` file with newline separate hostnames
 - Backup /etc/hosts to your `$HOME`, since there are no guardrails on this script
 
 ```shell
-sudo ./scripts/update_k3s_host
+sudo ./scripts/update_k3s_hosts -i wlp2s0 k3s_hosts
 ```
 
 Then install `traefik`:
