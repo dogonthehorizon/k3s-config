@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+docker build -t "$1" . && \
+  docker save "$1" -o container.tar &&\
+  sudo k3s ctr images import container.tar
+
+rm container.tar

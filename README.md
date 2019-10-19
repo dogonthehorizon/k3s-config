@@ -69,13 +69,13 @@ on your system.
 ## Docker Registry
 
 `k3s` by default runs on containerd instead of docker so getting images 
-running in the cluster isn't quite so straightforward. Here's a quick and
-dirty hack:
+running in the cluster isn't quite so straightforward. The `publish-local`
+script is a wrapper around docker and k3s/ctr to import images for use inside
+the cluster, simply pass it the image name and it will build the Dockerfile
+in the current directory:
 
 ```sh
-docker build -t my.domain.com/container:latest .
-docker save my.domain.com/container:latest -o container.tar
-sudo k3s ctr images import container.tar
+./scripts/publish-local my.domain.com/container:latest
 kc run -i --tty my-container --image=my.domain.com/container:latest --image-pull-policy=Never -- sh
 ```
 
